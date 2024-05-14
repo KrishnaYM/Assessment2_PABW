@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Data Artikel</title>
+    <style>
+      .hapus-btn {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 15px;
+        font-weight: 500;
+      }
+
+      .hapus-btn:hover {
+        background-color: rgb(223, 6, 6);
+      }
+      #data-table td:first-child {
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2 class="mb-10 mt-10 text-center font-bold text-2xl">Data Artikel</h2>
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table
+        id="data-table"
+        class="w-full text-sm text-left rtl:text-right text-black font-normal "
+      >
+        <thead class="text-xs text-white uppercase bg-cyan-900 text-center">
+          <tr>
+            <th scope="col" class="px-6 py-3">ID Artikel</th>
+            <th scope="col" class="px-6 py-3">Judul</th>
+            <th scope="col" class="px-6 py-3">Subjudul</th>
+            <th scope="col" class="px-6 py-3 text-center">Isi</th>
+            <th scope="col" class="px-6 py-3">Gambar</th>
+            <th scope="col" class="px-6 py-3">Tgl Posting</th>
+            <th scope="col" class="px-6 py-3">Tgl Update</th>
+            <th scope="col" class="px-6 py-3">Action</th>
+          </tr>
+        </thead>
+        <tbody id_artikel="tableBody" class=""></tbody>
+      </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $.ajax({
+          url: "get_artikel.php",
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+            console.log(data);
+            var table = $("#data-table tbody");
+            $.each(data, function (index, item) {
+              table.append(
+                "<tr><td>" +
+                  item.id_artikel +
+                  "</td><td>" +
+                  item.judul +
+                  "</td><td>" +
+                  item.subjudul +
+                  "</td><td>" +
+                  item.isi +
+                  "</td><td>" +
+                  item.gambar +
+                  "</td><td>" +
+                  item.tgl_post +
+                  "</td><td>" +
+                  item.tgl_update +
+                  '</td><td><button class="hapus-btn"  data-id_artikel="' +
+                  item.id_artikel +
+                  '">Hapus</button></td></tr>'
+              );
+            });
+          },
+          error: function (xhr, status, error) {
+            console.error(xhr.responseText);
+          },
+        });
+
+        $("#data-table").on("click", ".hapus-btn", function () {
+          var id_artikel = $(this).data("id_artikel");
+          var row = $(this).closest("tr");
+          $.ajax({
+            url: "delete_artikel.php",
+            type: "POST",
+            data: { id_artikel: id_artikel },
+            success: function (response) {
+              row.remove();
+              console.log("Data berhasil dihapus");
+            },
+            error: function (xhr, status, error) {
+              console.error(xhr.responseText);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
