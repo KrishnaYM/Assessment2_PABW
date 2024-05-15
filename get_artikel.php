@@ -18,7 +18,6 @@ if ($result->num_rows > 0) {
     }
 }
 
-
 $koneksi->close();
 
 echo json_encode($data);
